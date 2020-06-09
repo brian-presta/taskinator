@@ -75,7 +75,7 @@ footer {
   font-size: 4.5rem;
 }
 
-.page-content {
+main {
   flex: 1;
   display: flex;
   flex-wrap: wrap;

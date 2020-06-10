@@ -3,12 +3,20 @@ var tasksToDoEl = document.querySelector("#tasks-to-do");
 var taskIdCounter = 0;
 var pageContentE1 = document.querySelector("#page-content")
 
+var findTask = function(taskId){
+     return document.querySelector(".task-item[data-task-id='" + taskId + "']")
+}
 var taskFormHandler = function(event) {
     event.preventDefault()
     var taskNameInput = document.querySelector("input[name='task-name']").value
     var taskTypeInput = document.querySelector("select[name='task-type']").value
     if (!taskTypeInput) {
         taskTypeInput = 'Web'
+    }
+    var taskId = formEl.getAttribute('data-task-id')
+    if (taskId){
+        completeEditTask(taskNameInput,taskTypeInput,taskId)
+        return
     }
     var taskDataObj = {
         name:taskNameInput,
@@ -20,6 +28,13 @@ var taskFormHandler = function(event) {
     formEl.reset()
     createTaskE1(taskDataObj)
 };
+var completeEditTask = function(taskName,taskType,taskId){
+    var taskSelected = findTask(taskId)
+    taskSelected.querySelector('h3').textContent = taskName
+    taskSelected.querySelector('span').textContent = taskType
+    formEl.removeAttribute("data-task-id")
+    formEl.querySelector("button").textContent = "Add Task"
+}
 var createTaskE1 = function(taskDataObj) {
     // create list item
     var listItemEl = document.createElement("li")
@@ -83,11 +98,11 @@ var taskButtonHandler = function(event) {
     }
 }
 var deleteTask = function(taskId) {
-    var taskSelected = document.querySelector(".task-item[data-task-id='"+taskId+"']")
+    var taskSelected = findTask(taskId)
     taskSelected.remove()
 }
 var editTask = function(taskId){
-    var taskSelected = document.querySelector(".task-item[data-task-id='"+taskId+"']") 
+    var taskSelected = findTask(taskId)
     var taskName = taskSelected.querySelector("h3.task-name").textContent
     var taskType = taskSelected.querySelector("span").textContent
     document.querySelector("input[name='task-name']").value = taskName

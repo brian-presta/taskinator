@@ -5,10 +5,17 @@ var taskFormHandler = function(event) {
     event.preventDefault()
     var taskNameInput = document.querySelector("input[name='task-name']").value
     var taskTypeInput = document.querySelector("select[name='task-type']").value
+    if (!taskTypeInput) {
+        taskTypeInput = 'Web'
+    }
     var taskDataObj = {
         name:taskNameInput,
         type:taskTypeInput
     }
+    if (!taskNameInput) {
+        return
+    }
+    formEl.reset()
     createTaskE1(taskDataObj)
 };
 var createTaskE1 = function(taskDataObj) {

@@ -41,6 +41,7 @@ var createTaskE1 = function(taskDataObj) {
     // create list item
     var listItemEl = document.createElement("li")
     listItemEl.className = "task-item"
+    listItemEl.draggable = true
     // assign id
     listItemEl.setAttribute("data-task-id",taskIdCounter)
     // create div wrapper 
@@ -83,10 +84,6 @@ var createTaskActions = function(taskId) {
         statusOptionE1.setAttribute("value",statusChoices[x])
         statusSelectEl.appendChild(statusOptionE1)
     }
-
-
-    
-
     return actionContainerE1
 };
 var taskButtonHandler = function(event) {
@@ -128,6 +125,37 @@ var taskStatusChangeHandler = function(event){
     tasksCompletedEl.appendChild(taskSelected)
     }
 }
+var dragTaskHandler = function(event) {
+    var taskId = event.target.getAttribute("data-task-id")
+    event.dataTransfer.setData("text/plain",taskId)
+    // console.log(event.dataTransfer.getData("text/plain"))
+}
+var dropZoneDragHandler = function(event){
+    if (event.target.closest(".task-list")) {
+        event.preventDefault()
+    }
+}
+var dropTaskHandler = function(event) {
+    taskId = event.dataTransfer.getData("text/plain")
+    dropZone = event.target.closest(".task-list")
+    draggedItem = findTask(taskId)
+    event.target.appendChild(draggedItem)
+    var status = draggedItem.querySelector("select")
+    if (dropZone.id === 'tasks-to-do'){
+        status.selectedIndex = 0
+    }
+    if (dropZone.id === 'tasks-in-progress'){
+        status.selectedIndex = 1
+    }
+    if (dropZone.id === 'tasks-completed'){
+        status.selectedIndex = 2
+    }
+    
+
+}
 formEl.addEventListener("submit",taskFormHandler);
-pageContentE1.addEventListener("click", taskButtonHandler);
+pageContentE1.addEventListener("click", taskButtonHandler)
 pageContentE1.addEventListener("change",taskStatusChangeHandler)
+pageContentE1.addEventListener("dragstart",dragTaskHandler)
+pageContentE1.addEventListener("dragover",dropZoneDragHandler)
+pageContentE1.addEventListener("drop",dropTaskHandler)

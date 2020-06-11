@@ -189,14 +189,52 @@ var dropTaskHandler = function(event) {
     }
     saveTasks()
 }
-var dragLeaveHandler = function(){
+var dragLeaveHandler = function() {
     taskListEl = event.target.closest(".task-list")
     if(taskListEl){
         taskListEl.removeAttribute("style")
     }
 }
-var saveTasks = function(){
+var saveTasks = function() {
     localStorage.setItem("tasks",JSON.stringify(tasks))
+}
+var loadTasks = function() {
+    if (!localStorage.getItem("tasks")){
+        return false
+    }
+    tasks = JSON.parse(localStorage.getItem("tasks"))
+    for (x in tasks){
+        tasks[x].id = taskIdCounter
+        var taskDataObj = tasks[x]
+        var listItemEl = document.createElement("li")
+        listItemEl.className = "task-item"
+        listItemEl.draggable = true
+        // assign id
+        listItemEl.setAttribute("data-task-id",taskIdCounter)
+        // create div wrapper 
+        var taskInfoE1 = document.createElement("div")
+        taskInfoE1.className = "task-info"
+        // insert HTML into div
+        taskInfoE1.innerHTML = '<h3 class="task-name">'+taskDataObj.name+'</h3><span class="task-type">'+taskDataObj.type+'</span>'
+        listItemEl.appendChild(taskInfoE1)
+        var taskActionsE1 = createTaskActions(taskIdCounter)
+        listItemEl.appendChild(taskActionsE1)
+        switch (taskDataObj.status){
+            case 'to do':
+                tasksToDoEl.appendChild(listItemEl)
+                listItemEl.querySelector("select[name='status-change']").selectedIndex = 0
+                break
+            case 'in progress':
+                tasksInProgressEl.appendChild(listItemEl)
+                listItemEl.querySelector("select[name='status-change']").selectedIndex = 1
+                break
+            case 'completed':
+                tasksCompletedEl.appendChild(listItemEl)
+                listItemEl.querySelector("select[name='status-change']").selectedIndex = 2
+                break
+        }
+        taskIdCounter++
+    }
 }
 formEl.addEventListener("submit",taskFormHandler);
 pageContentE1.addEventListener("click", taskButtonHandler)
@@ -205,3 +243,4 @@ pageContentE1.addEventListener("dragstart",dragTaskHandler)
 pageContentE1.addEventListener("dragover",dropZoneDragHandler)
 pageContentE1.addEventListener("drop",dropTaskHandler)
 pageContentE1.addEventListener("dragleave",dragLeaveHandler)
+loadTasks()

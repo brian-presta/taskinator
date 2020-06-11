@@ -45,6 +45,7 @@ var completeEditTask = function(taskName,taskType,taskId){
     }
     formEl.removeAttribute("data-task-id")
     formEl.querySelector("button").textContent = "Add Task"
+    saveTasks()
 }
 var createTaskE1 = function(taskDataObj) {
     // create list item
@@ -65,6 +66,7 @@ var createTaskE1 = function(taskDataObj) {
     taskDataObj.id = taskIdCounter
     tasks.push(taskDataObj)
     taskIdCounter++
+    saveTasks()
 }
 var createTaskActions = function(taskId) {
     var actionContainerE1 = document.createElement("div")
@@ -116,6 +118,7 @@ var deleteTask = function(taskId) {
             break
         }
     }
+    saveTasks()
 }
 var editTask = function(taskId){
     var taskSelected = findTask(taskId)
@@ -147,6 +150,7 @@ var taskStatusChangeHandler = function(event){
             break
         }
     }
+    saveTasks()
 }
 var dragTaskHandler = function(event) {
     var taskId = event.target.getAttribute("data-task-id")
@@ -183,12 +187,16 @@ var dropTaskHandler = function(event) {
             break
         }
     }
+    saveTasks()
 }
 var dragLeaveHandler = function(){
     taskListEl = event.target.closest(".task-list")
     if(taskListEl){
         taskListEl.removeAttribute("style")
     }
+}
+var saveTasks = function(){
+    localStorage.setItem("tasks",JSON.stringify(tasks))
 }
 formEl.addEventListener("submit",taskFormHandler);
 pageContentE1.addEventListener("click", taskButtonHandler)

@@ -131,14 +131,18 @@ var dragTaskHandler = function(event) {
     // console.log(event.dataTransfer.getData("text/plain"))
 }
 var dropZoneDragHandler = function(event){
-    if (event.target.closest(".task-list")) {
+    taskListEl = event.target.closest(".task-list")
+    if (taskListEl) {
+        taskListEl.setAttribute("style", "background: rgba(68, 233, 255, 0.7); border-style: dashed;")
         event.preventDefault()
+        
     }
 }
 var dropTaskHandler = function(event) {
     taskId = event.dataTransfer.getData("text/plain")
     dropZone = event.target.closest(".task-list")
     draggedItem = findTask(taskId)
+    dropZone.removeAttribute('style')
     event.target.appendChild(draggedItem)
     var status = draggedItem.querySelector("select")
     if (dropZone.id === 'tasks-to-do'){
@@ -150,8 +154,12 @@ var dropTaskHandler = function(event) {
     if (dropZone.id === 'tasks-completed'){
         status.selectedIndex = 2
     }
-    
-
+}
+var dragLeaveHandler = function(){
+    taskListEl = event.target.closest(".task-list")
+    if(taskListEl){
+        taskListEl.removeAttribute("style")
+    }
 }
 formEl.addEventListener("submit",taskFormHandler);
 pageContentE1.addEventListener("click", taskButtonHandler)
@@ -159,3 +167,4 @@ pageContentE1.addEventListener("change",taskStatusChangeHandler)
 pageContentE1.addEventListener("dragstart",dragTaskHandler)
 pageContentE1.addEventListener("dragover",dropZoneDragHandler)
 pageContentE1.addEventListener("drop",dropTaskHandler)
+pageContentE1.addEventListener("dragleave",dragLeaveHandler)

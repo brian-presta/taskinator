@@ -4,6 +4,7 @@ var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
 var taskIdCounter = 0;
 var pageContentE1 = document.querySelector("#page-content")
+var tasks = []
 
 var findTask = function(taskId){
      return document.querySelector(".task-item[data-task-id='" + taskId + "']")
@@ -22,7 +23,8 @@ var taskFormHandler = function(event) {
     }
     var taskDataObj = {
         name:taskNameInput,
-        type:taskTypeInput
+        type:taskTypeInput,
+        status: "to do"
     }
     if (!taskNameInput) {
         return
@@ -34,6 +36,13 @@ var completeEditTask = function(taskName,taskType,taskId){
     var taskSelected = findTask(taskId)
     taskSelected.querySelector('h3').textContent = taskName
     taskSelected.querySelector('span').textContent = taskType
+    for (x in tasks) {
+        if (tasks[x].id == taskId) {
+            tasks[x].name = taskName
+            tasks[x].type = taskType
+            break
+        }
+    }
     formEl.removeAttribute("data-task-id")
     formEl.querySelector("button").textContent = "Add Task"
 }
@@ -53,6 +62,8 @@ var createTaskE1 = function(taskDataObj) {
     var taskActionsE1 = createTaskActions(taskIdCounter)
     listItemEl.appendChild(taskActionsE1)
     tasksToDoEl.appendChild(listItemEl)
+    taskDataObj.id = taskIdCounter
+    tasks.push(taskDataObj)
     taskIdCounter++
 }
 var createTaskActions = function(taskId) {
@@ -99,6 +110,12 @@ var taskButtonHandler = function(event) {
 var deleteTask = function(taskId) {
     var taskSelected = findTask(taskId)
     taskSelected.remove()
+    for (x in tasks) {
+        if (tasks[x].id == taskId) {
+            tasks.splice(parseInt(x),1)
+            break
+        }
+    }
 }
 var editTask = function(taskId){
     var taskSelected = findTask(taskId)
@@ -123,6 +140,12 @@ var taskStatusChangeHandler = function(event){
     }
     else if (statusValue === 'completed') {
     tasksCompletedEl.appendChild(taskSelected)
+    }
+    for (x in tasks) {
+        if (tasks[x].id == taskId) {
+            tasks[x].status = statusValue
+            break
+        }
     }
 }
 var dragTaskHandler = function(event) {
@@ -153,6 +176,12 @@ var dropTaskHandler = function(event) {
     }
     if (dropZone.id === 'tasks-completed'){
         status.selectedIndex = 2
+    }
+    for (x in tasks) {
+        if (tasks[x].id == taskId){
+            tasks[x].status = status[status.selectedIndex].value.toLowerCase()
+            break
+        }
     }
 }
 var dragLeaveHandler = function(){
